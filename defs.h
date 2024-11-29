@@ -30,6 +30,7 @@
 #define PRIORITY_MED 2
 #define PRIORITY_LOW 1
 
+
 // Represents the resource amounts for the entire rocket
 typedef struct Resource {
     char *name;      // Dynamically allocated string
