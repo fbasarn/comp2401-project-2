@@ -60,7 +60,9 @@ void resource_amount_init(ResourceAmount *resource_amount, Resource *resource, i
  * @param[out] array  Pointer to the `ResourceArray` to initialize.
  */
 void resource_array_init(ResourceArray *array) {
-    
+    array->resources = (Resource**)malloc(sizeof(Resource*));
+    array->capacity = 1;
+    array->size = 0;
 }
 
 /**
@@ -71,7 +73,9 @@ void resource_array_init(ResourceArray *array) {
  *
  * @param[in,out] array  Pointer to the `ResourceArray` to clean.
  */
-void resource_array_clean(ResourceArray *array) {}
+void resource_array_clean(ResourceArray *array) {
+    
+}
 
 /**
  * Adds a `Resource` to the `ResourceArray`, resizing if necessary (doubling the size).
