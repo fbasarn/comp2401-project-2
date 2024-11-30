@@ -26,7 +26,7 @@ static int system_store_resources(System *);
  */
 void system_create(System **system, const char *name, ResourceAmount consumed, ResourceAmount produced, int processing_time, EventQueue *event_queue) {
     *system = (System*) malloc(sizeof(System));
-    (*system)->name = (char*)malloc(sizeof(strlen(*name)));
+    (*system)->name = (char*)malloc(sizeof(strlen(name) + 1));
     strcpy((*system)->name, name);
     (*system)->consumed = consumed;
     (*system)->produced = produced;
@@ -44,6 +44,7 @@ void system_create(System **system, const char *name, ResourceAmount consumed, R
  * @param[in,out] system  Pointer to the `System` to be destroyed.
  */
 void system_destroy(System *system) {
+    free(system->name);
     free(system);
 }
 
@@ -227,11 +228,9 @@ void system_array_clean(SystemArray *array) {
 
     for (int i = 0; i < array->size; i++) {
         system_destroy(array->systems[i]);
-        array->systems[i] = NULL;
     }
 
     free(array->systems);
-    array->systems = NULL;
     array->capacity = 0;
     array->size = 0;
 }
@@ -250,15 +249,19 @@ void system_array_add(SystemArray *array, System *system) {
        
         //if not enough capacity, allocate new memory 
         System **newArray = (System**) calloc((array->size * 2), sizeof(System*));
-        array->capacity = array->size * 2; //increment the capacity
+        
         
         //copy everything from old memory to new memory
         for(int i = 0; i < array->size; i++){
             newArray[i] = array->systems[i];
         }
         
+        int size = array->size;
         //clean old memory
-        free(array->systems);
+        system_array_clean(array);
+        
+        array->capacity = size * 2; //set new capacity
+        array->size = size;
         //set pointer to the new array
         array->systems = newArray;
     }
