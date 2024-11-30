@@ -33,7 +33,7 @@ void resource_create(Resource **resource, const char *name, int amount, int max_
  * @param[in,out] resource  Pointer to the `Resource` to be destroyed.
  */
 void resource_destroy(Resource *resource) {
-    
+    free(resource);
 }
 
 /* ResourceAmount functions */
@@ -59,7 +59,9 @@ void resource_amount_init(ResourceAmount *resource_amount, Resource *resource, i
  *
  * @param[out] array  Pointer to the `ResourceArray` to initialize.
  */
-void resource_array_init(ResourceArray *array) {}
+void resource_array_init(ResourceArray *array) {
+    
+}
 
 /**
  * Cleans up the `ResourceArray` by destroying all resources and freeing memory.
