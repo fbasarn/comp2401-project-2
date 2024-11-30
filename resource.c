@@ -33,7 +33,9 @@ void resource_create(Resource **resource, const char *name, int amount, int max_
  * @param[in,out] resource  Pointer to the `Resource` to be destroyed.
  */
 void resource_destroy(Resource *resource) {
-    free(resource);
+    if(resource != NULL){
+        free(resource);
+    }
 }
 
 /* ResourceAmount functions */
@@ -60,7 +62,7 @@ void resource_amount_init(ResourceAmount *resource_amount, Resource *resource, i
  * @param[out] array  Pointer to the `ResourceArray` to initialize.
  */
 void resource_array_init(ResourceArray *array) {
-    array->resources = (Resource**)malloc(sizeof(Resource*));
+    array->resources = (Resource**)calloc(1, sizeof(Resource*));
     array->capacity = 1;
     array->size = 0;
 }
@@ -74,7 +76,19 @@ void resource_array_init(ResourceArray *array) {
  * @param[in,out] array  Pointer to the `ResourceArray` to clean.
  */
 void resource_array_clean(ResourceArray *array) {
-    
+    if (array == NULL || array->resources == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < array->size; i++) {
+        resource_destroy(array->resources[i]);
+        array->resources[i] = NULL;
+    }
+
+    free(array->resources);
+    array->resources = NULL;
+    array->capacity = 0;
+    array->size = 0;
 }
 
 /**
@@ -86,4 +100,27 @@ void resource_array_clean(ResourceArray *array) {
  * @param[in,out] array     Pointer to the `ResourceArray`.
  * @param[in]     resource  Pointer to the `Resource` to add.
  */
-void resource_array_add(ResourceArray *array, Resource *resource) {}
+void resource_array_add(ResourceArray *array, Resource *resource) {
+    
+    if(array->capacity < array->size + 1){
+       
+        //if not enough capacity, allocate new memory 
+        Resource **newArray = (Resource**) calloc((array->size * 2), sizeof(Resource*));
+        array->capacity = array->size * 2; //increment the capacity
+        
+        //copy everything from old memory to new memory
+        for(int i = 0; i < array->size; i++){
+            newArray[i] = array->resources[i];
+        }
+        
+        //clean old memory
+        free(array->resources);
+        //set pointer to the new array
+        array->resources = newArray;
+    }
+
+    //add the new resource to the new memory
+    array->resources[array->size] = resource;        
+    //increment the size
+    array->size++;
+}
