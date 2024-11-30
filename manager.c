@@ -31,7 +31,9 @@ void manager_init(Manager *manager) {
  *
  * @param[in,out] manager  Pointer to the `Manager` to clean.
  */
-void manager_clean(Manager *manager) {}
+void manager_clean(Manager *manager) {
+    free(manager);
+}
 
 /**
  * Runs the manager loop.
