@@ -26,7 +26,7 @@ static int system_store_resources(System *);
  */
 void system_create(System **system, const char *name, ResourceAmount consumed, ResourceAmount produced, int processing_time, EventQueue *event_queue) {
     *system = (System*) malloc(sizeof(System));
-    (*system)->name = (char*)malloc(sizeof(strlen(*name)));
+    (*system)->name = (char*)malloc(sizeof(strlen(name)));
     strcpy((*system)->name, name);
     (*system)->consumed = consumed;
     (*system)->produced = produced;
@@ -256,9 +256,11 @@ void system_array_add(SystemArray *array, System *system) {
         for(int i = 0; i < array->size; i++){
             newArray[i] = array->systems[i];
         }
+
+        int size = array->size;
         
         //clean old memory
-        free(array->systems);
+        system_array_clean(array);
         //set pointer to the new array
         array->systems = newArray;
     }
