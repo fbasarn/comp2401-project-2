@@ -18,11 +18,10 @@
  */
 void resource_create(Resource **resource, const char *name, int amount, int max_capacity) {
     *resource = (Resource*) malloc(sizeof(Resource));
+    (*resource)->name = (char*)malloc(sizeof(strlen(name)+1));
+    strcpy((*resource)->name, name);
     (*resource)->amount = amount;
     (*resource)->max_capacity = max_capacity;
-    (*resource)->name = (char*)malloc(sizeof(strlen(*name)));
-    strcpy((*resource)->name, name);
-
 }
 
 /**
