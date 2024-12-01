@@ -32,10 +32,12 @@ void resource_create(Resource **resource, const char *name, int amount, int max_
  * @param[in,out] resource  Pointer to the `Resource` to be destroyed.
  */
 void resource_destroy(Resource *resource) {
-    if(resource->name != NULL){
-        free(resource->name);
+
+    if(resource != NULL){
+        free(resource->name); //freeing memory pointed by the pointer
+        free(resource);
     }
-    free(resource);
+    
 }
 
 /* ResourceAmount functions */
@@ -81,12 +83,12 @@ void resource_array_clean(ResourceArray *array) {
     }
 
     for (int i = 0; i < array->size; i++) {
-        resource_destroy(array->resources[i]);
-        array->resources[i] = NULL;
+        if(array->resources != NULL){
+            resource_destroy(array->resources[i]); //cleaning the memory pointed by the pointer
+            array->resources[i] = NULL;
+        }
     }
-
     free(array->resources);
-    array->resources = NULL;
     array->capacity = 0;
     array->size = 0;
 }
@@ -102,25 +104,29 @@ void resource_array_clean(ResourceArray *array) {
  */
 void resource_array_add(ResourceArray *array, Resource *resource) {
     
-    if(array->capacity < array->size + 1){
-       
+    
+    if(array->capacity <= array->size){
+
         //if not enough capacity, allocate new memory 
         Resource **newArray = (Resource**) calloc((array->size * 2), sizeof(Resource*));
         array->capacity = array->size * 2; //increment the capacity
-        
+
         //copy everything from old memory to new memory
         for(int i = 0; i < array->size; i++){
             newArray[i] = array->resources[i];
         }
-        
+
+
         //clean old memory
         free(array->resources);
+
         //set pointer to the new array
         array->resources = newArray;
     }
 
     //add the new resource to the new memory
-    array->resources[array->size] = resource;        
+    array->resources[array->size] = resource;       
     //increment the size
     array->size++;
+
 }

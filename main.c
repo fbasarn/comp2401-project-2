@@ -68,4 +68,5 @@ void load_data(Manager *manager) {
     system_array_add(&manager->system_array, life_support_system);
     system_array_add(&manager->system_array, crew_capsule_system);
     system_array_add(&manager->system_array, generator_system);
+
 }

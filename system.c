@@ -44,6 +44,7 @@ void system_create(System **system, const char *name, ResourceAmount consumed, R
  * @param[in,out] system  Pointer to the `System` to be destroyed.
  */
 void system_destroy(System *system) {
+    free(system->name);
     free(system);
 }
 
@@ -246,9 +247,10 @@ void system_array_clean(SystemArray *array) {
  * @param[in]     system  Pointer to the `System` to add.
  */
 void system_array_add(SystemArray *array, System *system) {
-        if(array->capacity < array->size + 1){
-       
-        //if not enough capacity, allocate new memory 
+        
+        if(array->capacity <= array->size){
+        
+        //allocate new memory 
         System **newArray = (System**) calloc((array->size * 2), sizeof(System*));
         array->capacity = array->size * 2; //increment the capacity
         
@@ -256,13 +258,13 @@ void system_array_add(SystemArray *array, System *system) {
         for(int i = 0; i < array->size; i++){
             newArray[i] = array->systems[i];
         }
-
-        int size = array->size;
         
         //clean old memory
-        system_array_clean(array);
+        free(array->systems);
+        
         //set pointer to the new array
         array->systems = newArray;
+        
     }
 
     //add the new resource to the new memory
