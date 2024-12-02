@@ -33,8 +33,8 @@ void manager_init(Manager *manager) {
  */
 void manager_clean(Manager *manager) {
     resource_array_clean(&manager->resource_array);
-//    system_array_clean(&manager->system_array);
-//    event_queue_clean(&manager->event_queue);
+    system_array_clean(&manager->system_array);
+    event_queue_clean(&manager->event_queue);
     manager->simulation_running = 0;
 }
 

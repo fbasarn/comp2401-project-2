@@ -52,7 +52,6 @@ void event_queue_clean(EventQueue *queue) {
     while(curr != NULL){
         EventNode *temp = curr;
         curr = curr->next;
-        free(&temp->event);
         free(temp);
     }
 
@@ -72,6 +71,7 @@ void event_queue_push(EventQueue *queue, const Event *event) {
 
     EventNode *newNode = (EventNode*)malloc(sizeof(EventNode));
     newNode->event = *event;
+    newNode->next = NULL;
 
     if(queue->head == NULL) queue->head = newNode;
     else if(queue->head->event.priority < newNode->event.priority){
@@ -79,12 +79,14 @@ void event_queue_push(EventQueue *queue, const Event *event) {
         queue->head = newNode;
     }else{
         EventNode *curr = queue->head;
-        while (curr->next != NULL && curr->next->event.priority <= newNode->event.priority) {
+        EventNode *temp = NULL;
+        while (curr != NULL && curr->event.priority >= newNode->event.priority) {
+            temp = curr;
             curr = curr->next;
         }
 
-        newNode->next = curr->next;
-        curr->next = newNode;
+        temp->next = newNode;
+        newNode->next = curr;
     }
     queue->size++;
 }
@@ -99,6 +101,17 @@ void event_queue_push(EventQueue *queue, const Event *event) {
  * @return               Non-zero if an event was successfully popped; zero otherwise.
  */
 int event_queue_pop(EventQueue *queue, Event *event) {
-    
-    return 0;
+    //if there are any events in the queue, remove the event at the head of the queue and copy its
+    //event data into the *event argument. Return a nonzero value (e.g., 1);
+    //4.2. If there were no events in the queue, return 0.
+    if(queue->head == NULL) return 0;
+    else{
+        *event = queue->head->event;
+        
+        EventNode *temp = queue->head;
+        queue->head = queue->head->next;
+        free(temp);
+        queue->size--;
+        return 1;
+    }
 }
