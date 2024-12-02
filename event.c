@@ -33,7 +33,10 @@ void event_init(Event *event, System *system, Resource *resource, int status, in
  *
  * @param[out] queue  Pointer to the `EventQueue` to initialize.
  */
-void event_queue_init(EventQueue *queue) {}
+void event_queue_init(EventQueue *queue) {
+    queue->head = NULL;
+    queue->size = 0;
+}
 
 /**
  * Cleans up the `EventQueue`.
@@ -42,7 +45,19 @@ void event_queue_init(EventQueue *queue) {}
  * 
  * @param[in,out] queue  Pointer to the `EventQueue` to clean.
  */
-void event_queue_clean(EventQueue *queue) {}
+void event_queue_clean(EventQueue *queue) {
+
+    EventNode *curr = queue->head;
+
+    while(curr != NULL){
+        EventNode *temp = curr;
+        curr = curr->next;
+        free(&temp->event);
+        free(temp);
+    }
+
+    queue->size = 0;
+}
 
 /**
  * Pushes an `Event` onto the `EventQueue`.
@@ -52,7 +67,27 @@ void event_queue_clean(EventQueue *queue) {}
  * @param[in,out] queue  Pointer to the `EventQueue`.
  * @param[in]     event  Pointer to the `Event` to push onto the queue.
  */
-void event_queue_push(EventQueue *queue, const Event *event) {}
+void event_queue_push(EventQueue *queue, const Event *event) {
+    
+
+    EventNode *newNode = (EventNode*)malloc(sizeof(EventNode));
+    newNode->event = *event;
+
+    if(queue->head == NULL) queue->head = newNode;
+    else if(queue->head->event.priority < newNode->event.priority){
+        newNode->next = queue->head;
+        queue->head = newNode;
+    }else{
+        EventNode *curr = queue->head;
+        while (curr->next != NULL && curr->next->event.priority <= newNode->event.priority) {
+            curr = curr->next;
+        }
+
+        newNode->next = curr->next;
+        curr->next = newNode;
+    }
+    queue->size++;
+}
 
 /**
  * Pops an `Event` from the `EventQueue`.
@@ -64,7 +99,6 @@ void event_queue_push(EventQueue *queue, const Event *event) {}
  * @return               Non-zero if an event was successfully popped; zero otherwise.
  */
 int event_queue_pop(EventQueue *queue, Event *event) {
-    // Temporarily, this only returns 0 so that it is ignored 
-    // during early testing. Replace this with the correct logic.
+    
     return 0;
 }

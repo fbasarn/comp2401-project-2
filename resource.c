@@ -18,7 +18,7 @@
  */
 void resource_create(Resource **resource, const char *name, int amount, int max_capacity) {
     *resource = (Resource*) malloc(sizeof(Resource));
-    (*resource)->name = (char*)malloc(sizeof(strlen(name)+1));
+    (*resource)->name = (char*)malloc(strlen(name)+1);
     strcpy((*resource)->name, name);
     (*resource)->amount = amount;
     (*resource)->max_capacity = max_capacity;
@@ -32,12 +32,8 @@ void resource_create(Resource **resource, const char *name, int amount, int max_
  * @param[in,out] resource  Pointer to the `Resource` to be destroyed.
  */
 void resource_destroy(Resource *resource) {
-
-    if(resource != NULL){
-        free(resource->name); //freeing memory pointed by the pointer
-        free(resource);
-    }
-    
+    free(resource->name);
+    free(resource);
 }
 
 /* ResourceAmount functions */
@@ -82,13 +78,14 @@ void resource_array_clean(ResourceArray *array) {
         return;
     }
 
-    for (int i = 0; i < array->size; i++) {
+    for (int i = 0; i < array->capacity; i++) {
         if(array->resources != NULL){
             resource_destroy(array->resources[i]); //cleaning the memory pointed by the pointer
-            array->resources[i] = NULL;
+            //array->resources[i] = NULL;
         }
     }
     free(array->resources);
+    array->resources = NULL;
     array->capacity = 0;
     array->size = 0;
 }
